@@ -1,15 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
     constructor(
         private usersService: UsersService,
         private jwtService: JwtService,
     ) {}
+
+    async signIn(username: string, password: string) {
+        const user = await this.usersService.findOne(username);
+        if (!await bcrypt.compare(password, user.password)) {
+            throw new UnauthorizedException();
+        }
+
+        const payload = { sub: user._id, username: user.username };
+        return {
+            access_token: await this.jwtService.signAsync(payload),
+        };
+    }
     create(createAuthDto: CreateAuthDto) {
         return 'This action adds a new auth';
     }
