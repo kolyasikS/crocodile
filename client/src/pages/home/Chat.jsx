@@ -39,7 +39,6 @@ const Chat = () => {
     }, []);
 
     const sendMessage = async (e) => {
-        e.preventDefault();
         if (!messageRef.current.value) {
             return;
         }
@@ -48,6 +47,10 @@ const Chat = () => {
         });
 
         messageRef.current.value = '';
+    }
+
+    const clearMessages = () => {
+        setMessages([]);
     }
     return (
         <div className={'flex flex-col items-center justify-end h-[800px] w-[500px] py-10'}>
@@ -91,7 +94,7 @@ const Chat = () => {
                     Send
                 </Button>
                 <Button
-                    onClick={sendMessage}
+                    onClick={clearMessages}
                     sx={{
                         fontSize: 16,
                         width: 150
@@ -99,7 +102,7 @@ const Chat = () => {
                     variant={'contained'}
                     color={'error'}
                 >
-                    Send
+                    Clear
                 </Button>
             </Stack>
         </div>
