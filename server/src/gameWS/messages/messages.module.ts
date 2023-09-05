@@ -5,4 +5,4 @@ import { MessagesGateway } from './messages.gateway';
 @Module({
     providers: [MessagesGateway],
 })
-export class EventsModule {}
+export class MessagesModule {}

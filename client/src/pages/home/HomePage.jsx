@@ -1,9 +1,10 @@
 import React from 'react';
+import Chat from './Chat';
 
 const HomePage = () => {
     return (
-        <section>
-            <h1>Hello HomePage!</h1>
+        <section className={'flex max-h-[700px] items-center justify-center'}>
+            <Chat/>
         </section>
     );
 };

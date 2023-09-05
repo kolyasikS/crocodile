@@ -1,0 +1,15 @@
+{
+  "parser": "@babel/eslint-parser",
+  "plugins": [
+    "react"
+  ],
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": "latest",
+    "babelOptions": { "presets": [
+      "@babel/preset-react",
+      ["babel-preset-react-app", false]
+    ]
+    }
+  }
+}
