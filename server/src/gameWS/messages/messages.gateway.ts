@@ -15,4 +15,10 @@ export class MessagesGateway {
         console.log(data);
         this.server.emit('reMessage', { message: data })
     }
+
+    @SubscribeMessage('draw')
+    draw(@MessageBody() data: any): void {
+        console.log(data);
+        this.server.emit('draw', data)
+    }
 }

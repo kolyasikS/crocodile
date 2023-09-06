@@ -43,7 +43,6 @@ const Chat = () => {
             return;
         }
         socket.timeout(5000).emit('message', messageRef.current.value, () => {
-            console.log(1);
         });
 
         messageRef.current.value = '';
@@ -53,7 +52,7 @@ const Chat = () => {
         setMessages([]);
     }
     return (
-        <div className={'flex flex-col items-center justify-end h-[800px] w-[500px] py-10'}>
+        <div className={'flex flex-col items-center justify-end h-[800px] w-[500px] py-10 px-5 rounded-2xl border-2 border-black'}>
             <List className={'max-h-[500px] overflow-auto w-full flex flex-col items-center'}
                   sx={{
                       position: 'relative',
