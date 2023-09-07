@@ -12,6 +12,7 @@ import { v4 as uuid} from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
 import { GameService } from '../game/game.service';
 import CreateRoomDto from './dto/create-room.dto';
+import { JoinRoomDto } from './dto/join-room.dto';
 @WebSocketGateway({
     cors: {
         origin: '*',
@@ -31,10 +32,12 @@ export class GameGateway {
     }
 
     @SubscribeMessage('joinRoom')
-    async joinToRoom(@MessageBody() data: any, @ConnectedSocket() socket: Socket): Promise<void> {
+    async joinToRoom(@MessageBody() data: JoinRoomDto, @ConnectedSocket() socket: Socket): Promise<void> {
         socket.join(data.room);
         console.log(`${socket.id} is joining ${data.room}`);
-        this.server.to(data.room).emit('roomJoined', data);
+        const role = await this.gameService.join(data)
+        console.log('role', role);
+        this.server.to(data.room).emit('roomJoined', {...data, role});
     }
 
     @SubscribeMessage('createRoom')

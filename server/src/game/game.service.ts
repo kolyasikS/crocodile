@@ -10,6 +10,7 @@ import { jwtConstants } from '../constants';
 import { UserAuthDto } from '../auth/dto/user-auth.dto';
 import { JoinGameDto } from './dto/join-game.dto';
 import { UsersService } from '../users/users.service';
+import { User } from '../schemas/user.schema';
 
 const enum Roles {
     Player = 'Player',
@@ -33,15 +34,36 @@ export class GameService {
         }
     }
 
-    async join({ token, room }: JoinGameDto) {
+    async join({ username, token, room }: JoinGameDto) {
         console.log(token, room);
         try {
-            const payload = await this.jwtService.verifyAsync<UserAuthDto>(token, {
+            const payload = {username} ?? await this.jwtService.verifyAsync<UserAuthDto>(token, {
                 secret: jwtConstants.secret
             })
-
-            const game: Game = await this.gameModel.findOne({room});
-            if (game.owner.username === payload.username) {
+            const game = (await this.gameModel.aggregate([
+                {
+                    $match: {
+                        room
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'owner',
+                        foreignField: '_id',
+                        as: 'ownerUser'
+                    }
+                },
+                {
+                    $unwind: { path: "$games",  preserveNullAndEmptyArrays: true,}
+                },
+                {
+                    $limit: 1
+                }
+            ]))[0];
+            console.log(game && game.ownerUser[0].username)
+            const ownerUsername = game && game.ownerUser[0].username;
+            if (ownerUsername === payload.username) {
                 return Roles.Owner;
             } else {
                 return Roles.Player;

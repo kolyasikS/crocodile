@@ -12,7 +12,7 @@ const gameReducer = createReducer(initialState, (builder) => {
             state.room = payload.room;
         })
         .addCase(addPlayer, (state, { payload }) => {
-            state.players = [...state.players, payload.player];
+            state.players = [...state.players, {username: payload.player, role: payload.role}];
         })
         .addCase(addMessage, (state, { payload }) => {
             state.messages = [...state.messages, payload.message];

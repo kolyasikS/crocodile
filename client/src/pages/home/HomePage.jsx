@@ -3,19 +3,22 @@ import Chat from '../game/Chat';
 import Playground from '../game/Playground';
 import Container from '@widgets/Container';
 import { Box, Button, Stack, Typography } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN } from '../../lib/constants';
 import { socket } from '../../socket';
 import JoinToRoomDialog from './JoinToRoomDialog';
+import { setRoom } from '../../store/actions/game.actions';
 
 const HomePage = () => {
     const username = useSelector(state => state.user.username);
     const [joinDialog, setJoinDialog] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     useEffect(() => {
         console.log(socket)
         const roomCreated = (data) => {
+            dispatch(setRoom(data.room));
             navigate(`/game/${data.room}`);
         }
         socket.on('roomCreated', roomCreated);

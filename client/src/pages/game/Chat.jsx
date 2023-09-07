@@ -27,18 +27,11 @@ const Chat = ({isGameStarted}) => {
             socket.emit('joinRoom', {room, username});
         }
     }, []);
-    const roomCreated = useCallback((data) => {
-        if (players.includes(data.username)) {
-            return;
-        }
-        dispatch(addPlayer(data.username));
-        dispatch(addMessage({username: data.username, type: 'NEW_PLAYER'}));
-    }, [players]);
+
 
     useEffect(() => {
         function onConnect() {
             setIsConnected(true);
-            alert('CONNECTION');
             socket.emit('joinRoom', {room, username});
         }
 
@@ -64,7 +57,7 @@ const Chat = ({isGameStarted}) => {
             socket.off('reMessage', onReMessage);
             // socket.off('roomCreated', roomCreated);
         };
-    }, [roomCreated]);
+    }, []);
     const sendMessage = async (e) => {
         if (!messageRef.current.value) {
             return;
@@ -116,7 +109,7 @@ const Chat = ({isGameStarted}) => {
                     Send
                 </Button>
                 <Button
-                    disabled={!isGameStarted}
+                    disabled={isGameStarted}
                     onClick={clearMessages}
                     sx={{
                         fontSize: 16,

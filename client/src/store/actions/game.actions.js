@@ -10,10 +10,11 @@ export const setRoom = createAction(SET_ROOM, (room) => {
     }
 });
 
-export const addPlayer = createAction(ADD_PLAYER, (player) => {
+export const addPlayer = createAction(ADD_PLAYER, (player, role) => {
     return {
         payload: {
-            player
+            player,
+            role
         }
     }
 });
