@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 
 const Game = () => {
     let params = useParams();
-    console.log(params);
+    // console.log(params);
 
     return (
         <section className={'flex max-h-[850px] items-center justify-center'}>

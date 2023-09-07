@@ -2,7 +2,6 @@ import React from 'react';
 import { ListItem, ListItemText } from '@mui/material';
 
 const Message = ({username, message, type}) => {
-    console.log(username);
     return (
         type === 'DEFAULT'
             ? <ListItem sx={{ padding: 0 }}>
