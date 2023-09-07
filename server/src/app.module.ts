@@ -5,14 +5,15 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { PaintGateway } from './gameWS/paint/paint.gateway';
-import { MessagesModule } from './gameWS/messages/messages.module';
+import { GameWSModule } from './gameWS/game.module';
+import { GameModule } from './game/game.module';
 
 @Module({
     imports: [
         AuthModule,
         UsersModule,
-        MessagesModule,
+        GameModule,
+        GameWSModule,
         ConfigModule.forRoot({ envFilePath: '.env' }),
         MongooseModule.forRoot(process.env.MONGODB_CONNECTION_STRING),
     ],
