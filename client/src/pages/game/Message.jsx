@@ -7,8 +7,8 @@ const Message = ({username, message, type}) => {
         type === 'DEFAULT'
             ? <ListItem sx={{ padding: 0 }}>
                 <ListItemText p={0} className={'mb-0 text-left'}
-                              primaryTypographyProps={{ fontSize: 20 }}>
-                    <span>{username}</span>: {message}
+                              primaryTypographyProps={{ fontSize: 21 }}>
+                    <span className={'text-blue-400 text-xl font-bold'}>{username}</span>: {message}
                 </ListItemText>
             </ListItem>
             : <ListItem sx={{ padding: 0 }}>

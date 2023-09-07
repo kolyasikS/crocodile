@@ -4,8 +4,8 @@ import SignUp from './SignUp';
 
 const Auth = () => {
     const [isLogin, setIsLogin] = useState(true);
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('kolyasik');
+    const [password, setPassword] = useState('123456');
     return (
         isLogin
             ? <Login username={username} setUsername={setUsername}

@@ -9,6 +9,10 @@ const Playground = () => {
 
     useEffect(() => {
         ctx.current = canvasRef.current.getContext('2d');
+        canvasRef.current.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        })
     }, []);
 
     const startPosition = (e) => {
@@ -25,7 +29,6 @@ const Playground = () => {
         if (!drawing.current) {
             return;
         }
-        console.log(e.pageX - e.target.offsetLeft, e.pageY - e.target.offsetTop)
         const lineWidth = 5;
         ctx.current.lineWidth = lineWidth;
         ctx.current.lineCap = 'round';

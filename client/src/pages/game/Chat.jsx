@@ -27,6 +27,7 @@ const Chat = () => {
         if (isConnected) {
             socket.emit('joinRoom', {room, username});
         }
+
     }, []);
     const roomCreated = useCallback((data) => {
         console.log('joined', data, room);

@@ -23,4 +23,5 @@ export class AuthController {
     checkAuth(@UserReq('user') user: UserAuthDto) {
         return this.authService.signToken({sub: user.sub, username: user.username});
     }
+
 }
