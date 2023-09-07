@@ -19,16 +19,16 @@ export class MessagesGateway {
     @WebSocketServer()
     server: Server;
     @SubscribeMessage('message')
-    message(@MessageBody() data: MessageDto, @ConnectedSocket() client: Socket): void {
+    message(@MessageBody() data: MessageDto): void {
         console.log(data);
         this.server.to(data.room).emit('reMessage', data);
     }
 
     @SubscribeMessage('joinRoom')
-    joinToRoom(@MessageBody() data: any, @ConnectedSocket() socket: Socket): void {
+    async joinToRoom(@MessageBody() data: any, @ConnectedSocket() socket: Socket): Promise<void> {
         socket.join(data.room);
-        console.log(data);
-        socket.to(data.room).emit('roomCreated', data);
+        console.log(`${socket.id} is joining ${data.room}`);
+        this.server.to(data.room).emit('roomCreated', data);
     }
     @SubscribeMessage('draw')
     draw(@MessageBody() data: any): void {

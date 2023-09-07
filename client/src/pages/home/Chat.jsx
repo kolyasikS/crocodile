@@ -1,47 +1,61 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { socket } from '../../socket';
 import { Button, List, ListItem, ListItemText, Stack, TextField } from '@mui/material';
 import { LightTextArea, LightTextField } from '@shared/CustomMUIComponents';
 import { io, Socket } from 'socket.io-client';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Message from './Message';
 import { chatSelector } from '../../store/selectors';
+import { addMessage, addPlayer, clear } from '../../store/actions/game.actions';
 
 const Chat = () => {
-
     const [isConnected, setIsConnected] = useState(socket.connected);
-    const [messages, setMessages] = useState([]);
 
     const messageRef = useRef();
     const listMessagesRef = useRef();
 
-    const {username, room} = useSelector(chatSelector);
-    console.log(1);
+    const dispatch = useDispatch();
+    const {username, room, players, messages} = useSelector(chatSelector);
+
+    console.log('players', players);
     useEffect(() => {
         if (listMessagesRef.current) {
             listMessagesRef.current.scrollTop = listMessagesRef.current.scrollHeight;
         }
     }, [messages])
     useEffect(() => {
+        if (isConnected) {
+            socket.emit('joinRoom', {room, username});
+        }
+    }, []);
+    const roomCreated = useCallback((data) => {
+        console.log('joined', data, room);
+        console.log(players, data.username, username, players.includes(data.username));
+        if (players.includes(data.username)) {
+            return;
+        }
+        dispatch(addPlayer(data.username));
+        dispatch(addMessage({username: data.username, type: 'NEW_PLAYER'}));
+    }, [players]);
+
+    useEffect(() => {
+        console.log(players, socket);
         function onConnect() {
             setIsConnected(true);
-            socket.emit('joinRoom', room);
+            console.log(socket.id, room);
+            socket.emit('joinRoom', {room, username});
         }
 
         function onDisconnect() {
             setIsConnected(false);
-            setMessages([]);
         }
 
         function onReMessage(data) {
             console.log(data);
-            setMessages(previous => [...previous, {...data, type: 'DEFAULT'}]);
+            dispatch(addMessage({...data, type: 'DEFAULT'}));
         }
 
-        function roomCreated(data) {
-            console.log('joined', data, room);
-            setMessages(prevState => [...prevState, {username, type: 'NEW_PLAYER'}]);
-        }
+
 
         socket.on('connect', onConnect);
         socket.on('disconnect', onDisconnect);
@@ -54,8 +68,7 @@ const Chat = () => {
             socket.off('reMessage', onReMessage);
             socket.off('roomCreated', roomCreated);
         };
-    }, []);
-    console.log(messages, room);
+    }, [roomCreated]);
     const sendMessage = async (e) => {
         if (!messageRef.current.value) {
             return;
@@ -65,11 +78,10 @@ const Chat = () => {
 
         messageRef.current.value = '';
     }
-
+    console.log(messages);
     const clearMessages = () => {
-        setMessages([]);
+        dispatch(clear());
     }
-    console.log(username);
     return (
         <div className={'relative shadow-lg bg-[#101418] shadow-[#64c7ee] flex flex-col items-center justify-end h-[800px] w-[500px] pb-10 pt-16 px-5 rounded-2xl border-2 border-black'}>
             <h2 className={'absolute top-5 text-3xl'}>{room}</h2>
@@ -80,7 +92,7 @@ const Chat = () => {
                   }}
                   ref={listMessagesRef}
             >
-                {messages.length
+                {messages?.length
                     ? messages.map((message, ind) => <Message {...message} key={ind}/>)
                     : <h1 className={'text-4xl'}>No messages...</h1>
                 }
