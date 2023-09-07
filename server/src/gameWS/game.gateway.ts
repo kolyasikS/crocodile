@@ -10,7 +10,7 @@ import { Server, Socket } from 'socket.io';
 import { MessageDto } from './dto/message.dto';
 import { v4 as uuid} from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
-// import { GameService } from '../game/game.service';
+import { GameService } from '../game/game.service';
 import CreateRoomDto from './dto/create-room.dto';
 @WebSocketGateway({
     cors: {
@@ -22,7 +22,7 @@ export class GameGateway {
     server: Server;
 
     constructor(
-        // private gameService: GameService
+        private gameService: GameService
     ) {}
     @SubscribeMessage('message')
     message(@MessageBody() data: MessageDto): void {
@@ -38,19 +38,16 @@ export class GameGateway {
     }
 
     @SubscribeMessage('createRoom')
-    createRoom(@MessageBody() data: CreateRoomDto, @ConnectedSocket() socket: Socket): Promise<void> {
+    async createRoom(@MessageBody() data: CreateRoomDto, @ConnectedSocket() socket: Socket): Promise<void> {
         const room = uuid();
         console.log(data.username, room);
-        // const res = await this.gameService.create({owner: data.username, room});
-        const res = {errors: false};
-        console.log('res', res);
+        const res = await this.gameService.create({owner: data.username, room});
         if (res.errors) {
             console.log(res.errors)
             return;
         }
-        console.log('success');
         socket.join(room);
-        socket.to(room).emit('roomCreated', { room });
+        this.server.to(room).emit('roomCreated', { room });
     }
 
     @SubscribeMessage('draw')

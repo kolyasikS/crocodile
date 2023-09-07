@@ -1,13 +1,13 @@
 
 import { Module } from '@nestjs/common';
 import { GameGateway } from './game.gateway';
-/*import { GameModule } from '../game/game.module';
+import { GameModule } from '../game/game.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Game, GameSchema } from '../schemas/game.schema';*/
+import { Game, GameSchema } from '../schemas/game.schema';
 
 @Module({
     imports: [
-        // GameModule,
+        GameModule,
     ],
     providers: [GameGateway],
 })

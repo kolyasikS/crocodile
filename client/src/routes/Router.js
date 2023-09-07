@@ -6,6 +6,7 @@ import authRoutes from './auth.routes';
 import Auth from '../pages/auth/Auth';
 import Game from '../pages/game/Game';
 import { ACCESS_TOKEN } from '../lib/constants';
+import { socket } from '../socket';
 
 const router = createBrowserRouter([
     {

@@ -79,7 +79,7 @@ const Chat = () => {
     }
     return (
         <div className={'relative shadow-lg bg-[#101418] shadow-[#64c7ee] flex flex-col items-center justify-end h-[800px] w-[500px] pb-10 pt-16 px-5 rounded-2xl border-2 border-black'}>
-            <h2 className={'absolute top-5 text-3xl'}>{room}</h2>
+            <h2 className={'absolute top-5 text-3xl'}>Game room</h2>
             <List className={'max-h-[500px] overflow-auto w-full flex flex-col items-center'}
                   sx={{
                       position: 'relative',

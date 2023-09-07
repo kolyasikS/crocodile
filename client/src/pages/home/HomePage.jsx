@@ -15,23 +15,11 @@ const HomePage = () => {
     useEffect(() => {
         console.log(socket)
         const roomCreated = (data) => {
-            console.log(123);
             navigate(`/game/${data.room}`);
         }
-        function onConnect() {
-            console.log(socket.id);
-        }
-        function onDisconnect() {
-            console.log('disconnect');
-        }
-
-        socket.on('disconnect', onDisconnect)
         socket.on('roomCreated', roomCreated);
-        socket.on('connect', onConnect);
         return () => {
             socket.off('roomCreated', roomCreated);
-            socket.off('disconnect', onDisconnect)
-            socket.off('connect', onConnect);
         }
     }, []);
     const signOut = async () => {
