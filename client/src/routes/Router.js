@@ -29,11 +29,27 @@ const router = createBrowserRouter([
     },
     {
         path: '/auth',
-        element: <Auth/>
+        element: <Auth/>,
     },
     {
         path: '/game/:room',
-        element: <Game/>
+        element: <Game/>,
+        loader: async ({params}) => {
+            const token = window.localStorage.getItem(ACCESS_TOKEN);
+            console.log('join')
+            const role = await fetch('http://localhost:3000/game/join', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({token, room: params.room})
+            });
+            console.log(role);
+            return {
+                role
+            }
+        }
     },
     {
         path: '*',

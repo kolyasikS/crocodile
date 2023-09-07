@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Chat from '../game/Chat';
 import Playground from '../game/Playground';
 import Container from '@widgets/Container';
@@ -6,16 +6,44 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN } from '../../lib/constants';
+import { socket } from '../../socket';
 
 const HomePage = () => {
     const username = useSelector(state => state.user.username);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        console.log(socket)
+        const roomCreated = (data) => {
+            console.log(123);
+            navigate(`/game/${data.room}`);
+        }
+        function onConnect() {
+            console.log(socket.id);
+        }
+        function onDisconnect() {
+            console.log('disconnect');
+        }
+
+        socket.on('disconnect', onDisconnect)
+        socket.on('roomCreated', roomCreated);
+        socket.on('connect', onConnect);
+        return () => {
+            socket.off('roomCreated', roomCreated);
+            socket.off('disconnect', onDisconnect)
+            socket.off('connect', onConnect);
+        }
+    }, []);
     const signOut = async () => {
         if (window.localStorage.getItem(ACCESS_TOKEN)) {
             window.localStorage.removeItem(ACCESS_TOKEN);
         }
 
         navigate('/login');
+    }
+    const createGameRoom = () => {
+        socket.timeout(5000).emit('createRoom', {username});
+
     }
 
     return (
@@ -36,6 +64,7 @@ const HomePage = () => {
                     <Box width={'50%'} display={'flex'} justifyContent={'flex-start'}
                     >
                         <Button variant={'contained'} color={'info'}
+                                onClick={createGameRoom}
                                 sx={{
                                     fontSize: 18,
                                     borderRadius: 2,

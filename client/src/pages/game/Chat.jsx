@@ -17,7 +17,6 @@ const Chat = () => {
     const dispatch = useDispatch();
     const {username, room, players, messages} = useSelector(chatSelector);
 
-    console.log('players', players);
     useEffect(() => {
         if (listMessagesRef.current) {
             listMessagesRef.current.scrollTop = listMessagesRef.current.scrollHeight;
@@ -27,11 +26,8 @@ const Chat = () => {
         if (isConnected) {
             socket.emit('joinRoom', {room, username});
         }
-
     }, []);
     const roomCreated = useCallback((data) => {
-        console.log('joined', data, room);
-        console.log(players, data.username, username, players.includes(data.username));
         if (players.includes(data.username)) {
             return;
         }
@@ -40,19 +36,18 @@ const Chat = () => {
     }, [players]);
 
     useEffect(() => {
-        console.log(players, socket);
         function onConnect() {
             setIsConnected(true);
-            console.log(socket.id, room);
+            alert('CONNECTION');
             socket.emit('joinRoom', {room, username});
         }
 
         function onDisconnect() {
+            console.log('DISSSSS');
             setIsConnected(false);
         }
 
         function onReMessage(data) {
-            console.log(data);
             dispatch(addMessage({...data, type: 'DEFAULT'}));
         }
 
@@ -61,13 +56,13 @@ const Chat = () => {
         socket.on('connect', onConnect);
         socket.on('disconnect', onDisconnect);
         socket.on('reMessage', onReMessage);
-        socket.on('roomCreated', roomCreated);
+        // socket.on('roomCreated', roomCreated);
 
         return () => {
             socket.off('connect', onConnect);
             socket.off('disconnect', onDisconnect);
             socket.off('reMessage', onReMessage);
-            socket.off('roomCreated', roomCreated);
+            // socket.off('roomCreated', roomCreated);
         };
     }, [roomCreated]);
     const sendMessage = async (e) => {
@@ -79,7 +74,6 @@ const Chat = () => {
 
         messageRef.current.value = '';
     }
-    console.log(messages);
     const clearMessages = () => {
         dispatch(clear());
     }

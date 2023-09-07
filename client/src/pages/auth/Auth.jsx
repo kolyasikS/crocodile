@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Login from './Login';
 import SignUp from './SignUp';
+import { useLoaderData } from 'react-router-dom';
 
 const Auth = () => {
     const [isLogin, setIsLogin] = useState(true);
     const [username, setUsername] = useState('kolyasik');
     const [password, setPassword] = useState('123456');
+    const data = useLoaderData();
     return (
         isLogin
             ? <Login username={username} setUsername={setUsername}
