@@ -1,7 +1,9 @@
 import { createBrowserRouter, redirect } from 'react-router-dom';
-import HomePage from './pages/home/HomePage';
-import Auth from './pages/auth/Auth';
-import App from './App';
+import HomePage from '../pages/home/HomePage';
+import Login from '../pages/auth/Login';
+import App from '../App';
+import authRoutes from './auth.routes';
+import Auth from '../pages/auth/Auth';
 
 const router = createBrowserRouter([
     {
@@ -9,8 +11,8 @@ const router = createBrowserRouter([
         element: <HomePage/>,
     },
     {
-        path: "/auth",
-        element: <Auth/>,
+        path: '/auth',
+        element: <Auth/>
     },
     {
         path: '*',

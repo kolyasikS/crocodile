@@ -13,13 +13,14 @@ export class AuthService {
 
     async signIn(username: string, password: string) {
         const user = await this.usersService.findOne(username);
-        if (!await bcrypt.compare(password, user.password)) {
+        console.log(user);
+        if (!user || !await bcrypt.compare(password, user.password)) {
             throw new UnauthorizedException();
         }
 
         const payload = { sub: user._id, username: user.username };
         return {
-            access_token: await this.jwtService.signAsync(payload),
+            access_token: await this.signToken(payload),
         };
     }
     create(createAuthDto: CreateAuthDto) {
@@ -40,5 +41,9 @@ export class AuthService {
 
     remove(id: number) {
         return `This action removes a #${id} auth`;
+    }
+
+    async signToken(payload) {
+        return await this.jwtService.signAsync(payload);
     }
 }

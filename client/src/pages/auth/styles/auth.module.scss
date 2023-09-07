@@ -1,0 +1,46 @@
+@import 'src/assets/styles/mixins.module.scss';
+
+.formLogin {
+    width: 100%;
+    min-height: 100vh;
+    @include flexCenter(true);
+}
+.formLoginInner {
+    width: 70%;
+    border-radius: 20px;
+    @include flexCenter(true);
+    min-height: 80vh;
+    padding: 30px 40px;
+    background: #101418;
+    h1 {
+        color: #fff;
+        text-align: center;
+        font-weight: 300;
+        font-size: 64px;
+        margin: 30px 0px 35px;
+    }
+}
+.form {
+    @include flexCenter(true);
+    gap: 20px;
+
+    label {
+        color: #fff;
+
+    }
+}
+
+.signUp {
+    margin: 30px;
+    text-align: center;
+    button {
+        color: #64c7ee;
+        text-transform: none;
+        text-decoration: underline;
+        transition: all 0.2s;
+        margin-left: 5px;
+        &:hover {
+            color: #3c9ff2;
+        }
+    }
+}

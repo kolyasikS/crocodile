@@ -30,7 +30,7 @@ const Playground = () => {
         ctx.current.lineWidth = lineWidth;
         ctx.current.lineCap = 'round';
         ctx.current.lineJoin = 'round'
-        ctx.current.strokeStyle = '#000';
+        ctx.current.strokeStyle = '#f123cd';
 
         ctx.current.lineTo(e.pageX - e.target.offsetLeft - 2, e.pageY - e.target.offsetTop - 2);
         ctx.current.stroke();
@@ -81,7 +81,7 @@ const Playground = () => {
                     width={700}
                     height={700}
                     tabIndex={1}
-                    className={'border-2 border-black rounded-2xl'}
+                    className={'shadow-lg bg-[#101418] shadow-[#64c7ee] border-2 border-white rounded-2xl'}
             ></canvas>
         </div>
     );

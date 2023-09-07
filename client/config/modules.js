@@ -6,6 +6,8 @@ const paths = require('./paths');
 const chalk = require('react-dev-utils/chalk');
 const resolve = require('resolve');
 
+const removeWildcardPart = p => p.replace('/*', ''); // add for alias
+
 /**
  * Get additional module paths based on the baseUrl of a compilerOptions object.
  *
@@ -42,10 +44,10 @@ function getAdditionalModulePaths(options = {}) {
 
   // Otherwise, throw an error.
   throw new Error(
-    chalk.red.bold(
-      "Your project's `baseUrl` can only be set to `src` or `node_modules`." +
-        ' Create React App does not support other values at this time.'
-    )
+      chalk.red.bold(
+          "Your project's `baseUrl` can only be set to `src` or `node_modules`." +
+          ' Create React App does not support other values at this time.'
+      )
   );
 }
 
@@ -61,13 +63,24 @@ function getWebpackAliases(options = {}) {
     return {};
   }
 
-  const baseUrlResolved = path.resolve(paths.appPath, baseUrl);
+  /*  const baseUrlResolved = path.resolve(paths.appPath, baseUrl);
 
-  if (path.relative(paths.appPath, baseUrlResolved) === '') {
-    return {
-      src: paths.appSrc,
-    };
-  }
+    if (path.relative(paths.appPath, baseUrlResolved) === '') {
+      return {
+        src: paths.appSrc,
+      };
+    }*/
+  let resultAlias = {src: paths.appSrc}
+
+  return Object.assign({}, resultAlias,
+      Object.keys(options.paths).reduce(
+          (obj, alias) => {
+            obj[removeWildcardPart(alias)] =
+                options.paths[alias].map(removeWildcardPart)[0]
+            return obj
+          }, {}
+      )
+  )
 }
 
 /**
@@ -82,13 +95,25 @@ function getJestAliases(options = {}) {
     return {};
   }
 
-  const baseUrlResolved = path.resolve(paths.appPath, baseUrl);
+  /* const baseUrlResolved = path.resolve(paths.appPath, baseUrl);
 
-  if (path.relative(paths.appPath, baseUrlResolved) === '') {
-    return {
-      '^src/(.*)$': '<rootDir>/src/$1',
-    };
-  }
+   if (path.relative(paths.appPath, baseUrlResolved) === '') {
+     return {
+       '^src/(.*)$': '<rootDir>/src/$1',
+     };
+   }*/
+  let resultAlias = {'^src/(.*)$': '<rootDir>/src/$1'}
+
+  return Object.assign({}, resultAlias,
+      Object.keys(options.paths).reduce(
+          (obj, alias) => {
+            obj[`^${removeWildcardPart(alias)}(.*)$`] =
+                options.paths[alias]
+                    .map(p => `<rootDir>/src/${removeWildcardPart(p)}/$1`)
+            return obj
+          }, {}
+      )
+  )
 }
 
 function getModules() {
@@ -98,7 +123,7 @@ function getModules() {
 
   if (hasTsConfig && hasJsConfig) {
     throw new Error(
-      'You have both a tsconfig.json and a jsconfig.json. If you are using TypeScript please remove your jsconfig.json file.'
+        'You have both a tsconfig.json and a jsconfig.json. If you are using TypeScript please remove your jsconfig.json file.'
     );
   }
 

@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Login from './Login';
+import SignUp from './SignUp';
 
 const Auth = () => {
+    const [isLogin, setIsLogin] = useState(true);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     return (
-        <section>
-            <h1>This is AUTH page</h1>
-        </section>
+        isLogin
+            ? <Login username={username} setUsername={setUsername}
+                     password={password} setPassword={setPassword}
+                     moveToSignUpPage={() => setIsLogin(false)}
+            />
+            : <SignUp username={username} setUsername={setUsername}
+                      password={password} setPassword={setPassword}
+                      moveToLoginPage={() => setIsLogin(true)}
+            />
+
     );
 };
 

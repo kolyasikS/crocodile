@@ -1,6 +1,14 @@
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import {
+    ConnectedSocket,
+    MessageBody,
+    SubscribeMessage,
+    WebSocketGateway,
+    WebSocketServer,
+    WsResponse,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 import { from, map, Observable } from 'rxjs';
+import { MessageDto } from './dto/message.dto';
 
 @WebSocketGateway({
     cors: {
@@ -11,11 +19,17 @@ export class MessagesGateway {
     @WebSocketServer()
     server: Server;
     @SubscribeMessage('message')
-    message(@MessageBody() data: any): void {
+    message(@MessageBody() data: MessageDto, @ConnectedSocket() client: Socket): void {
         console.log(data);
-        this.server.emit('reMessage', { message: data })
+        this.server.to(data.room).emit('reMessage', data);
     }
 
+    @SubscribeMessage('joinRoom')
+    joinToRoom(@MessageBody() data: any, @ConnectedSocket() socket: Socket): void {
+        socket.join(data.room);
+        console.log(data);
+        socket.to(data.room).emit('roomCreated', data);
+    }
     @SubscribeMessage('draw')
     draw(@MessageBody() data: any): void {
         console.log(data);

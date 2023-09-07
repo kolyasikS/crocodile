@@ -2,3 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body, html {
+    background: #121212;
+}
+
+*, *::after, *::before {
+    color: #fff;
+}
