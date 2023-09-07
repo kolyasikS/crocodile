@@ -72,3 +72,22 @@ export const LightTextArea = styled(TextField)({
         },
     }
 });
+
+export const LightStandardTextField = styled(TextField)({
+    '& input': {
+        color: '#fff',
+        fontSize: '18px',
+        background: '#101418',
+        borderRadius: '10px',
+        padding: '10px 15px'
+    },
+    '& label': {
+        color: '#fff',
+    },
+    '& .MuiInputBase-root:hover::before': {
+        borderBottom: '2px solid #E6EDF3',
+    },
+    '& .MuiInputBase-root::before': {
+        borderBottom: '2px solid #E6EDF3',
+    }
+});

@@ -1,0 +1,39 @@
+@import 'src/assets/styles/mixins.module';
+.infoBlock {
+    position: absolute;
+    @include flexCenter(true);
+    height: 100%;
+    width: 100%;
+
+}
+.infoBlock__inner {
+    @include flexCenter(true);
+    padding: 50px 20px 0;
+    width: 60%;
+    height: 60%;
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+    background: #04212f;
+
+    h2 {
+        font-size: 18px;
+        color: #f5f8f5;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    h3 {
+        font-size: 16px;
+        color: #f5f8f5;
+        text-align: center;
+    }
+}
+
+.link {
+    text-align: center;
+    margin-top: 20px;
+    border: 2px solid #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    background: #021c26;
+}

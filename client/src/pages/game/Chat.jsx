@@ -8,7 +8,7 @@ import Message from './Message';
 import { chatSelector } from '../../store/selectors';
 import { addMessage, addPlayer, clear } from '../../store/actions/game.actions';
 
-const Chat = () => {
+const Chat = ({isGameStarted}) => {
     const [isConnected, setIsConnected] = useState(socket.connected);
 
     const messageRef = useRef();
@@ -93,6 +93,7 @@ const Chat = () => {
                 }
             </List>
             <LightTextField
+                disabled={!isGameStarted}
                 sx={{
                     marginY: 5
                 }}
@@ -105,6 +106,7 @@ const Chat = () => {
                 spacing={2}
             >
                 <Button
+                    disabled={!isGameStarted}
                     onClick={sendMessage}
                     sx={{
                         fontSize: 16,
@@ -114,6 +116,7 @@ const Chat = () => {
                     Send
                 </Button>
                 <Button
+                    disabled={!isGameStarted}
                     onClick={clearMessages}
                     sx={{
                         fontSize: 16,

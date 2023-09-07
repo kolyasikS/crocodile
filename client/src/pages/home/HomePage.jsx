@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Chat from '../game/Chat';
 import Playground from '../game/Playground';
 import Container from '@widgets/Container';
@@ -7,11 +7,12 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ACCESS_TOKEN } from '../../lib/constants';
 import { socket } from '../../socket';
+import JoinToRoomDialog from './JoinToRoomDialog';
 
 const HomePage = () => {
     const username = useSelector(state => state.user.username);
+    const [joinDialog, setJoinDialog] = useState(false);
     const navigate = useNavigate();
-
     useEffect(() => {
         console.log(socket)
         const roomCreated = (data) => {
@@ -31,9 +32,12 @@ const HomePage = () => {
     }
     const createGameRoom = () => {
         socket.timeout(5000).emit('createRoom', {username});
-
     }
-
+    const joinGameRoom = (link) => {
+        if (link.includes('game/')) {
+            window.location.href = link;
+        }
+    }
     return (
         <section className={'flex min-h-[100vh] items-center justify-center'}>
             <Container className={'px-10 py-12'}>
@@ -41,6 +45,7 @@ const HomePage = () => {
                 <Stack direction={'row'} spacing={3} width={'100%'} mt={5} mb={3}>
                     <Box width={'50%'} display={'flex'} justifyContent={'flex-end'}>
                         <Button variant={'contained'} color={'success'}
+                                onClick={() => setJoinDialog(true)}
                                 sx={{
                                     fontSize: 18,
                                     borderRadius: 2,
@@ -68,6 +73,7 @@ const HomePage = () => {
                     Sign out
                 </Button>
             </Container>
+            <JoinToRoomDialog setOpen={setJoinDialog} open={joinDialog} join={joinGameRoom}/>
         </section>
     );
 };
