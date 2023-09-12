@@ -14,7 +14,7 @@ const router = createBrowserRouter([
         element: <HomePage/>,
         loader: async () => {
             const token = window.localStorage.getItem(ACCESS_TOKEN);
-            const isAuth = await fetch('http://localhost:3000/auth/refresh', {
+            /*const isAuth = await fetch('http://localhost:3000/auth/refresh', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -23,9 +23,25 @@ const router = createBrowserRouter([
             });
             if (!isAuth.ok) {
                 return redirect('/auth');
+            }*/
+
+            const response = await fetch('http://localhost:3000/users/game', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                return redirect('/auth');
             }
 
-            return isAuth;
+            const game = await response.text()
+                .then(text => text.length ? JSON.parse(text) : null);
+
+
+            return game;
         }
     },
     {

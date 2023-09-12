@@ -17,13 +17,7 @@ export class GameController {
 
   @Post('join')
   async join(@Body() data: JoinGameDto) {
-    console.log(1);
     return await this.gameService.join(data);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.gameService.findOne(+id);
   }
 
   @Patch(':id')

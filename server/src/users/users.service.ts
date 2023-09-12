@@ -1,15 +1,18 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
+import { UserAuthDto } from '../auth/dto/user-auth.dto';
+import { GameService } from '../game/game.service';
 
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectModel(User.name) private userModel: Model<User>
+        @InjectModel(User.name) private userModel: Model<User>,
+        @Inject(forwardRef(() => GameService)) private gameService: GameService
     ) {}
 
     async create(createUserDto: CreateUserDto) {
@@ -19,11 +22,8 @@ export class UsersService {
 
 
         try {
-            console.log(createUserDto)
             const hashPassword = await bcrypt.hash(createUserDto.password, 3);
-            console.log(2)
             const newUser = await this.userModel.create({...createUserDto, password: hashPassword});
-            console.log(3)
             return newUser;
         } catch (e) {
             return e;
@@ -39,6 +39,12 @@ export class UsersService {
     async findOne(username: string) {
         const user = this.userModel.findOne({username});
         return user;
+    }
+
+    async getGame(userAuthDto: UserAuthDto) {
+        const user = await this.userModel.findOne({username: userAuthDto.username});
+        const game = await this.gameService.getGameForUser(user._id);
+        return game;
     }
 
     update(id: number, updateUserDto: UpdateUserDto) {

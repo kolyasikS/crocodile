@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { GameModule } from './game.module';
 import { Game } from '../schemas/game.schema';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
@@ -10,6 +9,7 @@ import { jwtConstants } from '../constants';
 import { UserAuthDto } from '../auth/dto/user-auth.dto';
 import { JoinGameDto } from './dto/join-game.dto';
 import { UsersService } from '../users/users.service';
+import mongoose from 'mongoose';
 import { User } from '../schemas/user.schema';
 
 const enum Roles {
@@ -21,13 +21,13 @@ const enum Roles {
 export class GameService {
     constructor(
         @InjectModel(Game.name) private gameModel: Model<Game>,
-        private userService: UsersService,
+        @Inject(forwardRef(() => UsersService)) private userService: UsersService,
         private jwtService: JwtService,
     ) {}
     async create(createGameDto: CreateGameDto) {
         try {
             const ownerUser = await this.userService.findOne(createGameDto.owner);
-            const game = await this.gameModel.create({owner: ownerUser, room: createGameDto.room});
+            const game = await this.gameModel.create({owner: ownerUser, room: createGameDto.room, players: [ownerUser]});
             return game;
         } catch (e) {
             return e;
@@ -35,7 +35,6 @@ export class GameService {
     }
 
     async join({ username, token, room }: JoinGameDto) {
-        console.log(token, room);
         try {
             const payload = {username} ?? await this.jwtService.verifyAsync<UserAuthDto>(token, {
                 secret: jwtConstants.secret
@@ -61,7 +60,6 @@ export class GameService {
                     $limit: 1
                 }
             ]))[0];
-            console.log(game && game.ownerUser[0].username)
             const ownerUsername = game && game.ownerUser[0].username;
             if (ownerUsername === payload.username) {
                 return Roles.Owner;
@@ -74,9 +72,22 @@ export class GameService {
         }
 
     }
-
-    findOne(id: number) {
-        return `This action returns a #${id} game`;
+    async getGameForUser(_id: mongoose.Types.ObjectId) {
+        const game = await this.gameModel.findOne({players: {$in: [_id]}});
+        return game;
+    }
+    async leave(username: string) {
+        const user = await this.userService.findOne(username);
+        const game= await this.gameModel.findOneAndUpdate(
+            {players: {$in: [user._id]}},
+            {$pull: {players: user._id}},
+            {returnOriginal: false}
+        );
+        console.log(game);
+        if (game.players.length === 0) {
+            await this.gameModel.deleteOne({_id: game._id});
+        }
+        return game;
     }
 
     update(id: number, updateGameDto: UpdateGameDto) {
